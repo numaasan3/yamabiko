@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>山びこ学園 M365フォーム 分岐フロー図</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Meiryo', 'Yu Gothic', sans-serif;
+    background: #f0f4f8;
+    padding: 30px 20px;
+    font-size: 13px;
+    color: #2d3748;
+  }
+  h1 {
+    text-align: center;
+    font-size: 18px;
+    margin-bottom: 6px;
+    color: #1a365d;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 12px;
+    color: #718096;
+    margin-bottom: 30px;
+  }
+
+  .flow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .box {
+    border-radius: 8px;
+    padding: 10px 18px;
+    text-align: center;
+    font-weight: bold;
+    position: relative;
+  }
+  .box-common {
+    background: #ebf8ff;
+    border: 2px solid #3182ce;
+    color: #2b6cb0;
+    min-width: 280px;
+  }
+  .box-branch {
+    background: #fef3c7;
+    border: 2px solid #d69e2e;
+    color: #92400e;
+    min-width: 280px;
+  }
+  .box-type {
+    border-radius: 8px;
+    padding: 8px 14px;
+    text-align: center;
+    font-weight: bold;
+    min-width: 130px;
+  }
+  .type-kojin    { background: #e9d8fd; border: 2px solid #805ad5; color: #553c9a; }
+  .type-gyomu    { background: #c6f6d5; border: 2px solid #38a169; color: #276749; }
+  .type-yakan    { background: #bee3f8; border: 2px solid #3182ce; color: #2c5282; }
+  .type-imu      { background: #fed7d7; border: 2px solid #e53e3e; color: #822727; }
+
+  .box-sub {
+    border-radius: 6px;
+    padding: 7px 12px;
+    text-align: center;
+    font-weight: bold;
+    min-width: 110px;
+  }
+  .sub-nichukan  { background: #fefcbf; border: 2px solid #d69e2e; color: #744210; }
+  .sub-yakan2    { background: #e2e8f0; border: 2px solid #4a5568; color: #2d3748; }
+  .sub-judo      { background: #fed7e2; border: 2px solid #d53f8c; color: #702459; }
+  .sub-keido     { background: #e6fffa; border: 2px solid #319795; color: #234e52; }
+  .sub-naisitu   { background: #fefcbf; border: 2px solid #d69e2e; color: #744210; }
+  .sub-gaisitu   { background: #e2e8f0; border: 2px solid #4a5568; color: #2d3748; }
+
+  .box-field {
+    background: white;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    padding: 8px 12px;
+    text-align: left;
+    font-size: 11.5px;
+    font-weight: normal;
+    min-width: 160px;
+    line-height: 1.7;
+  }
+  .field-label {
+    font-weight: bold;
+    font-size: 11px;
+    color: #718096;
+    margin-bottom: 4px;
+    border-bottom: 1px dashed #e2e8f0;
+    padding-bottom: 3px;
+  }
+  .field-item { display: flex; align-items: flex-start; gap: 4px; }
+  .field-item::before { content: "▸"; color: #a0aec0; flex-shrink: 0; }
+  .auto-reflect {
+    font-size: 10.5px;
+    color: #e53e3e;
+    background: #fff5f5;
+    border: 1px dashed #fc8181;
+    border-radius: 4px;
+    padding: 2px 6px;
+    margin-top: 4px;
+  }
+  .auto-reflect::before { content: "⚡ "; }
+
+  .merged-badge {
+    display: inline-block;
+    background: #319795;
+    color: white;
+    font-size: 10px;
+    border-radius: 10px;
+    padding: 1px 8px;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+
+  .arrow-down {
+    width: 2px;
+    height: 24px;
+    background: #a0aec0;
+    margin: 0 auto;
+    position: relative;
+  }
+  .arrow-down::after {
+    content: '';
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 7px solid #a0aec0;
+  }
+
+  .branch-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    position: relative;
+  }
+  .branch-row::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 160px);
+    height: 2px;
+    background: #a0aec0;
+  }
+
+  .branch-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    position: relative;
+  }
+  .branch-col::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 24px;
+    background: #a0aec0;
+  }
+  .branch-col > .box-type { margin-top: 24px; }
+
+  .sub-branch-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 12px;
+    position: relative;
+    margin-top: 0;
+  }
+  .sub-branch-row::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 60px);
+    height: 2px;
+    background: #cbd5e0;
+  }
+
+  .sub-branch-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    position: relative;
+  }
+  .sub-branch-col::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 20px;
+    background: #cbd5e0;
+  }
+  .sub-branch-col > .box-sub { margin-top: 20px; }
+  .sub-branch-col > .box-field { margin-top: 20px; }
+
+  .arrow-down-sm {
+    width: 2px;
+    height: 16px;
+    background: #cbd5e0;
+    margin: 0 auto;
+    position: relative;
+  }
+  .arrow-down-sm::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 6px solid #cbd5e0;
+  }
+
+  /* 重度サブ分岐（日中・夜間）ラベル */
+  .judo-inner-label {
+    font-size: 10.5px;
+    font-weight: bold;
+    color: #702459;
+    background: #fff0f6;
+    border: 1px dashed #d53f8c;
+    border-radius: 4px;
+    padding: 2px 8px;
+    margin-bottom: 4px;
+    text-align: center;
+  }
+
+  .legend {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 36px;
+    padding: 14px 20px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+  }
+  .legend-box {
+    width: 16px; height: 16px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .note {
+    max-width: 900px;
+    margin: 16px auto 0;
+    background: #fffbeb;
+    border: 1px solid #f6e05e;
+    border-radius: 8px;
+    padding: 12px 18px;
+    font-size: 11.5px;
+    color: #744210;
+    line-height: 1.8;
+  }
+  .note strong { font-size: 12px; }
+</style>
+</head>
+<body>
+
+<h1>🏠 山びこ学園 M365フォーム 分岐フロー図</h1>
+<p class="subtitle">記録フォーム 入力フロー設計 ver.1.1　（2026年3月現在）</p>
+
+<div class="flow">
+
+  <!-- 共通項目 -->
+  <div class="box box-common">📅 ①　入力日（日付選択）</div>
+  <div class="arrow-down"></div>
+  <div class="box box-common">👤 ②　入力者名（スタッフ一覧から選択）</div>
+  <div class="arrow-down"></div>
+  <div class="box box-branch">③　記録種別を選んでください</div>
+  <div class="arrow-down"></div>
+
+  <!-- 4分岐 -->
+  <div class="branch-row">
+
+    <!-- ① 個人記録 -->
+    <div class="branch-col">
+      <div class="box-type type-kojin">📋 個人記録</div>
+      <div class="arrow-down-sm"></div>
+
+      <!-- 重度 / 軽度 分岐 -->
+      <div class="sub-branch-row">
+
+        <!-- 🔴 重度 -->
+        <div class="sub-branch-col">
+          <div class="box-sub sub-judo">🔴 重度</div>
+          <div class="arrow-down-sm"></div>
+
+          <!-- 重度の中で日中・夜間分岐 -->
+          <div class="sub-branch-row">
+
+            <div class="sub-branch-col">
+              <div class="box-sub sub-nichukan">🌞 日中</div>
+              <div class="arrow-down-sm"></div>
+              <div class="box-field">
+                <div class="field-label">📌 入力項目</div>
+                <div class="field-item">施設利用者名（重度から選択）</div>
+                <div class="field-item">入力者名（日勤）</div>
+                <div style="height:4px"></div>
+                <div style="font-size:11px; font-weight:bold; color:#553c9a;">支援記録 × 5セット</div>
+                <div style="font-size:10.5px; color:#718096; padding-left:6px; line-height:1.6;">
+                  支援項目1（選択）<br>
+                  <span style="font-size:9.5px;">食事/入浴/活動/余暇/体調/行事/通院/帰省/帰園/入院</span><br>
+                  支援内容（自由記述）<br>
+                  ✅ 特記フラグ
+                </div>
+              </div>
+            </div>
+
+            <div class="sub-branch-col">
+              <div class="box-sub sub-yakan2">🌙 夜間</div>
+              <div class="arrow-down-sm"></div>
+              <div class="box-field">
+                <div class="field-label">📌 入力項目</div>
+                <div class="field-item">施設利用者名（重度から選択）</div>
+                <div class="field-item">入力者名（夜勤）</div>
+                <div style="height:4px"></div>
+                <div style="font-size:11px; font-weight:bold; color:#553c9a;">各確認事項（評価＋様子）</div>
+                <div style="font-size:10.5px; color:#718096; padding-left:6px; line-height:1.7;">
+                  🍽 食事　→　●×△ ＋ 自由記述<br>
+                  🎮 余暇　→　●×△ ＋ 自由記述<br>
+                  🛏 就寝　→　●×△ ＋ 自由記述<br>
+                  🌡 体調　→　●×△ ＋ 自由記述<br>
+                  🌅 起床　→　●×△ ＋ 自由記述
+                </div>
+                <div class="field-item">特記事項（自由記述）</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- 🟢 軽度（日中・夜間を選択するが分岐なし・項目共通） -->
+        <div class="sub-branch-col">
+          <div class="box-sub sub-keido">🟢 軽度</div>
+          <div class="arrow-down-sm"></div>
+          <div class="box-field" style="min-width:200px;">
+            <div style="text-align:center;">
+              <span class="merged-badge">✨ 日中・夜間 項目共通（分岐なし）</span>
+            </div>
+            <div class="field-label">📌 入力項目</div>
+            <div class="field-item">施設利用者名（軽度から選択）</div>
+            <div class="field-item">入力者名（日勤 or 夜勤）</div>
+            <div style="height:4px"></div>
+            <div style="font-size:11px; font-weight:bold; color:#319795;">🌞🌙 日中・夜間の選択（識別用）</div>
+            <div style="font-size:10.5px; color:#718096; padding-left:6px; line-height:1.5; margin-bottom:4px;">
+              ※分岐なし。業務日誌・夜間日誌への<br>自動反映の識別に使用
+            </div>
+            <div style="font-size:11px; font-weight:bold; color:#234e52;">支援記録 × 5セット</div>
+            <div style="font-size:10.5px; color:#718096; padding-left:6px; line-height:1.6;">
+              支援項目1'（選択）<br>
+              <span style="font-size:9.5px;">日中/夜間/体調/入浴/帰省/帰園/入院</span><br>
+              支援内容（自由記述）<br>
+              ✅ 特記フラグ
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ② 業務日誌 -->
+    <div class="branch-col">
+      <div class="box-type type-gyomu">📓 業務日誌</div>
+      <div class="arrow-down-sm"></div>
+      <div class="box-field" style="min-width:170px;">
+        <div class="field-label">📌 入力項目</div>
+        <div class="field-item">日勤担当者（選択）</div>
+        <div class="field-item">早番担当者（選択）</div>
+        <div class="field-item">遅番担当者（選択）</div>
+        <div class="field-item">帰省者・帰園者（利用者選択）</div>
+        <div class="field-item">特記事項・引継ぎ（自由記述）</div>
+        <div class="auto-reflect">個人記録の✅項目を自動反映</div>
+        <div class="auto-reflect">医務日誌の内容を自動反映</div>
+        <div class="auto-reflect">支援項目（通院・入院）を自動反映</div>
+      </div>
+    </div>
+
+    <!-- ③ 夜間日誌 -->
+    <div class="branch-col">
+      <div class="box-type type-yakan">🌙 夜間日誌</div>
+      <div class="arrow-down-sm"></div>
+      <div class="box-field" style="min-width:170px;">
+        <div class="field-label">📌 入力項目</div>
+        <div class="field-item">帰省者・静養者（利用者選択）</div>
+        <div class="field-item">見回り確認時間</div>
+        <div style="font-size:10.5px; color:#718096; padding-left:14px;">開始時間 〜 終了時間</div>
+        <div class="field-item">不備な箇所等（自由記述）</div>
+        <div class="field-item">特記事項・引継ぎ（自由記述）</div>
+        <div class="auto-reflect">個人記録（夜間）✅項目を自動反映</div>
+      </div>
+    </div>
+
+    <!-- ④ 医務日誌 -->
+    <div class="branch-col">
+      <div class="box-type type-imu">🏥 医務日誌</div>
+      <div class="arrow-down-sm"></div>
+      <div class="sub-branch-row">
+
+        <div class="sub-branch-col">
+          <div class="box-sub sub-naisitu">🏠 施設内</div>
+          <div class="arrow-down-sm"></div>
+          <div class="box-field">
+            <div class="field-label">📌 入力項目</div>
+            <div class="field-item">施設利用者名（選択）</div>
+            <div class="field-item">科目（選択）</div>
+            <div style="font-size:10.5px; color:#718096; padding-left:14px; line-height:1.5;">
+              内科/外科/歯科/眼科<br>皮膚科/整形外科/泌尿器科/精神科 等
+            </div>
+            <div class="field-item">対応内容（自由記述）</div>
+          </div>
+        </div>
+
+        <div class="sub-branch-col">
+          <div class="box-sub sub-gaisitu">🚗 施設外</div>
+          <div class="arrow-down-sm"></div>
+          <div class="box-field">
+            <div class="field-label">📌 入力項目</div>
+            <div class="field-item">施設利用者名（選択）</div>
+            <div class="field-item">科目（選択）</div>
+            <div class="field-item">病院名（自由記述）</div>
+            <div class="field-item">医師コメント（自由記述）</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- end branch-row -->
+
+</div><!-- end flow -->
+
+<!-- 凡例 -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-box" style="background:#ebf8ff; border:2px solid #3182ce;"></div>共通項目（全種別）</div>
+  <div class="legend-item"><div class="legend-box" style="background:#fef3c7; border:2px solid #d69e2e;"></div>分岐選択</div>
+  <div class="legend-item"><div class="legend-box" style="background:#e9d8fd; border:2px solid #805ad5;"></div>個人記録</div>
+  <div class="legend-item"><div class="legend-box" style="background:#c6f6d5; border:2px solid #38a169;"></div>業務日誌</div>
+  <div class="legend-item"><div class="legend-box" style="background:#bee3f8; border:2px solid #3182ce;"></div>夜間日誌</div>
+  <div class="legend-item"><div class="legend-box" style="background:#fed7d7; border:2px solid #e53e3e;"></div>医務日誌</div>
+  <div class="legend-item">
+    <span style="background:#319795; color:white; font-size:9px; border-radius:8px; padding:1px 6px; font-weight:bold;">✨ 統合</span>
+    日中・夜間を統合した項目
+  </div>
+  <div class="legend-item"><div style="width:16px; height:16px; background:#fff5f5; border:1px dashed #fc8181; border-radius:3px; font-size:9px; display:flex; align-items:center; justify-content:center;">⚡</div>Power Automate連携が必要な自動反映</div>
+</div>
+
+<!-- 注記 -->
+<div class="note">
+  <strong>⚠️ 実装上の注意点（M365 Forms）</strong><br>
+  ① 「重度・軽度での利用者一覧の絞り込み」および「✅フラグの他日誌への自動反映」は、M365 Forms 単体では実現できません。<strong>Power Automate</strong> との連携が必要です。<br>
+  ② 軽度の個人記録は日中・夜間で項目が共通のため<strong>分岐なし</strong>。ただし「日中・夜間の選択」は残し、業務日誌・夜間日誌への自動反映時の識別に使用します。支援項目1'を5セット設けます。<br>
+  ③ 重度の個人記録のみ日中・夜間で分岐し、夜間は固定カテゴリ（食事・余暇・就寝・体調・起床）での評価形式になります。
+</div>
+
+</body>
+</html>
