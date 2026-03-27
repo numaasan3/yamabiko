@@ -7,10 +7,10 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
-    font-family: 'Meiryo', 'Yu Gothic', sans-serif;
+    font-family: 'Meiryo', 'Yu Gothic', sans-serif;h
     background: #f0f4f8;
     padding: 30px 20px;
-    font-size: 13px;
+    font-size: 13px;h
     color: #2d3748;
   }
   h1 {
@@ -484,6 +484,16 @@
   ② 軽度の個人記録は日中・夜間で項目が共通のため<strong>分岐なし</strong>。ただし「日中・夜間の選択」は残し、業務日誌・夜間日誌への自動反映時の識別に使用します。支援項目1'を5セット設けます。<br>
   ③ 重度の個人記録のみ日中・夜間で分岐し、夜間は固定カテゴリ（食事・余暇・就寝・体調・起床）での評価形式になります。
 </div>
-
+<script>
+ (function(){
+    function autoZoom(){
+         var scale = Math.min(1, document.documentElement.clientWidth / document.body.scrollWidth);
+         document.body.style.zoom = scale;
+    }
+    autoZoom();
+    window.addEventListener('resize', autoZoom);
+ })();
+</script>
+ 
 </body>
 </html>
